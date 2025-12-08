@@ -17,13 +17,16 @@ namespace redwood.Shell
         [STAThread]
         public static void Main()
         {
-            //Monitor parent process exit and close subprocesses if parent process exits first
-            //This will at some point in the future becomes the default
-            CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
+            try
+            {
+                //Monitor parent process exit and close subprocesses if parent process exits first
+                //This will at some point in the future becomes the default
+                CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
 
             //For Windows 7 and above, best to include relevant app.manifest entries as well
-            Cef.EnableHighDPISupport();
+            //Cef.EnableHighDPISupport();
 
+           
             var settings = new CefSettings()
             {
                 //By default CefSharp will use an in-memory cache, you need to specify a Cache Folder to persist data
@@ -36,7 +39,12 @@ namespace redwood.Shell
 
             //Perform dependency check to make sure all relevant resources are in our output directory.
             Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
-
+                throw new Exception("ce");
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
             var browser = new BrowserForm();
             Application.Run(browser);
 

@@ -9,18 +9,6 @@ using System.Threading.Tasks;
 
 namespace redwood.Shell
 {
-    public class DownRpt
-    {
-        public async void Execute()
-        {
-            // 使用示例
-            await FileDownloader.DownloadFileAsync(
-        "https://example.com/files/document.pdf",
-                @"C:\Downloads\document.pdf",""
-    );
-        }
-    }
-
     public class FileDownloader
     {
         public static async Task DownloadFileAsync(string url, string localFilePath,string token)

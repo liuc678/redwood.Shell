@@ -14,6 +14,13 @@ namespace redwood.Shell
             model.AddSeparator();
             model.AddItem(CefMenuCommand.Reload, "刷新");
             model.AddSeparator();
+            model.AddItem((CefMenuCommand)26511, "放大");
+            model.AddItem((CefMenuCommand)26512, "缩小");
+            var sfbl  = model.AddSubMenu((CefMenuCommand)26515, "缩放比例");
+            sfbl.AddItem((CefMenuCommand)26516, "80%");
+            sfbl.AddItem((CefMenuCommand)26513, "100%");
+            sfbl.AddItem((CefMenuCommand)26514, "150%");
+            model.AddSeparator();
             model.AddItem((CefMenuCommand)26501, "打开开发者工具");
             //model.AddItem((CefMenuCommand)26502, "关闭开发者工具");
 
@@ -45,7 +52,22 @@ namespace redwood.Shell
                     return true;
                 case CefMenuCommand.Paste:
                     browser.Paste();
-                    return true;               
+                    return true;
+                case (CefMenuCommand)26511:                    
+                    browser.GetHost().SetZoomLevel(browser.GetHost().GetZoomLevel() + 0.2);
+                    break;
+                case (CefMenuCommand)26512:
+                    browser.GetHost().SetZoomLevel(browser.GetHost().GetZoomLevel() -0.2 );
+                    break;
+                case (CefMenuCommand)26513:
+                    browser.SetZoomLevel(0);
+                    break;
+                case (CefMenuCommand)26514:
+                    browser.SetZoomLevel(0.5);
+                    break;
+                case (CefMenuCommand)26516:
+                    browser.SetZoomLevel(-0.8);
+                    break;
             }
             return false;
         }

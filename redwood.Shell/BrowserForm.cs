@@ -38,6 +38,7 @@ namespace redwood.Shell
 
             browser = new ChromiumWebBrowser("")
             {
+                KeyboardHandler = new KeyBoardHander(),
                 Dock = DockStyle.Fill,
             };
             this.Controls.Add(browser);
@@ -60,17 +61,34 @@ namespace redwood.Shell
                 obj.ReportPath = Path.Combine(Application.StartupPath, "fastreports");
                 browser.JavascriptObjectRepository.Register("desktop", obj, false);
 
+                browser.DownloadHandler = new MyDownloadHandler();
             }//browser.JavascriptObjectRepository.Register("jsObj", new JsEvent(), false, new BindingOptions { CamelCaseJavascriptNames = false });
-
-            {
-                //var menu = new ContextMenu();
-                //menu.MenuItems.Add("刷新", new EventHandler(this.刷新ToolStripMenuItem_Click));
-                //browser.ContextMenu = menu;
-            }
+            
             browser.MenuHandler = new MenuHandler();
+            //url = "www.163.com";
             LoadUrl(url);
-        }
+        }        
 
+        private void Browser_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+            {
+                switch (e.KeyCode)
+                {
+                    case (Keys)'+':
+                        browser.SetZoomLevel(0.5);
+                        break;
+                    case (Keys)'-':
+                        browser.SetZoomLevel(-0.5);
+                        break;
+                    case (Keys)'0':
+                        browser.SetZoomLevel(0);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }       
 
         private void LoadUrl(string url)
         {
@@ -178,6 +196,12 @@ MessageBoxIcon.Question // 图标类型：问号
         {
             browser.Reload();
         }
+
+        private void BrowserForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+           // var url = CustomConfig.Current.URL;
+           // browser.Load(url);               
+        }
     }
 
 
@@ -250,7 +274,7 @@ MessageBoxIcon.Question // 图标类型：问号
                 string param ="\"" +GetReportFileName(reportTempId,version) + "\" \"" + host + "/base/print/fast-client?token=" + token + "&reportTempId=" + reportTempId + "&rowGuids=" + rowGuids +"\"";
                                 
                 string exeFileName_Full = Path.Combine(Application.StartupPath, exeFileName);
-                WriteLog(exeFileName_Full + " " + param);
+                //WriteLog(exeFileName_Full + " " + param);
                 Process p = Process.Start(exeFileName_Full, param);                
 
             }
@@ -283,9 +307,9 @@ MessageBoxIcon.Question // 图标类型：问号
             return string.Format("{0}-{1}.frx", reportTempId, version);
         }
 
-        static void WriteLog(string msg)
+        public static void WriteLog(string msg)
         {
-            File.AppendAllText(Application.StartupPath + "\\log.txt", msg +"\r\n");
+            File.AppendAllText(Application.StartupPath + "\\log.txt", DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "------------\n" + msg +"\r\n");
         }
     }
 }

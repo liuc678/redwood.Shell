@@ -51,7 +51,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(207, 116);
+            this.button1.Location = new System.Drawing.Point(242, 189);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(118, 41);
             this.button1.TabIndex = 2;
@@ -68,7 +68,6 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
             this.Name = "frmConfig";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "系统配置";
             this.ResumeLayout(false);
             this.PerformLayout();

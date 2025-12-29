@@ -45,8 +45,17 @@
             this.mnuExit = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.刷新ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label1 = new System.Windows.Forms.Label();
+            this.pnlSearch = new System.Windows.Forms.Panel();
+            this.lblSearch_Result = new System.Windows.Forms.Label();
+            this.btnSearch = new System.Windows.Forms.Button();
+            this.btnSearch_Close = new System.Windows.Forms.Button();
+            this.btnSearch_down = new System.Windows.Forms.Button();
+            this.btnSearch_Up = new System.Windows.Forms.Button();
+            this.txtSearch = new System.Windows.Forms.TextBox();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
+            this.pnlSearch.SuspendLayout();
             this.SuspendLayout();
             // 
             // notifyIcon1
@@ -162,17 +171,103 @@
             this.刷新ToolStripMenuItem.Text = "刷新";
             this.刷新ToolStripMenuItem.Click += new System.EventHandler(this.刷新ToolStripMenuItem_Click);
             // 
+            // label1
+            // 
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Font = new System.Drawing.Font("宋体", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(1183, 551);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "正在关闭，请稍等...";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pnlSearch
+            // 
+            this.pnlSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlSearch.Controls.Add(this.lblSearch_Result);
+            this.pnlSearch.Controls.Add(this.btnSearch);
+            this.pnlSearch.Controls.Add(this.btnSearch_Close);
+            this.pnlSearch.Controls.Add(this.btnSearch_down);
+            this.pnlSearch.Controls.Add(this.btnSearch_Up);
+            this.pnlSearch.Controls.Add(this.txtSearch);
+            this.pnlSearch.Location = new System.Drawing.Point(632, 0);
+            this.pnlSearch.Name = "pnlSearch";
+            this.pnlSearch.Size = new System.Drawing.Size(551, 55);
+            this.pnlSearch.TabIndex = 3;
+            this.pnlSearch.Visible = false;
+            // 
+            // lblSearch_Result
+            // 
+            this.lblSearch_Result.AutoSize = true;
+            this.lblSearch_Result.Location = new System.Drawing.Point(257, 17);
+            this.lblSearch_Result.Name = "lblSearch_Result";
+            this.lblSearch_Result.Size = new System.Drawing.Size(35, 18);
+            this.lblSearch_Result.TabIndex = 5;
+            this.lblSearch_Result.Text = "-/-";
+            // 
+            // btnSearch
+            // 
+            this.btnSearch.Location = new System.Drawing.Point(173, 9);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(78, 29);
+            this.btnSearch.TabIndex = 4;
+            this.btnSearch.Text = "搜索";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            // 
+            // btnSearch_Close
+            // 
+            this.btnSearch_Close.Location = new System.Drawing.Point(476, 15);
+            this.btnSearch_Close.Name = "btnSearch_Close";
+            this.btnSearch_Close.Size = new System.Drawing.Size(60, 23);
+            this.btnSearch_Close.TabIndex = 3;
+            this.btnSearch_Close.Text = "关闭";
+            this.btnSearch_Close.UseVisualStyleBackColor = true;
+            this.btnSearch_Close.Click += new System.EventHandler(this.btnSearch_Close_Click);
+            // 
+            // btnSearch_down
+            // 
+            this.btnSearch_down.Location = new System.Drawing.Point(395, 15);
+            this.btnSearch_down.Name = "btnSearch_down";
+            this.btnSearch_down.Size = new System.Drawing.Size(75, 23);
+            this.btnSearch_down.TabIndex = 2;
+            this.btnSearch_down.Text = "下一个";
+            this.btnSearch_down.UseVisualStyleBackColor = true;
+            this.btnSearch_down.Click += new System.EventHandler(this.btnSearch_down_Click);
+            // 
+            // btnSearch_Up
+            // 
+            this.btnSearch_Up.Location = new System.Drawing.Point(314, 15);
+            this.btnSearch_Up.Name = "btnSearch_Up";
+            this.btnSearch_Up.Size = new System.Drawing.Size(75, 23);
+            this.btnSearch_Up.TabIndex = 1;
+            this.btnSearch_Up.Text = "前一个";
+            this.btnSearch_Up.UseVisualStyleBackColor = true;
+            this.btnSearch_Up.Click += new System.EventHandler(this.btnSearch_Up_Click);
+            // 
+            // txtSearch
+            // 
+            this.txtSearch.Location = new System.Drawing.Point(9, 10);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.Size = new System.Drawing.Size(158, 28);
+            this.txtSearch.TabIndex = 0;
+            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);
+            // 
             // BrowserForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(757, 450);
+            this.ClientSize = new System.Drawing.Size(1183, 551);
+            this.Controls.Add(this.pnlSearch);
+            this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "BrowserForm";
-            this.Text = "BrowserForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BrowserForm_FormClosing);
             this.contextMenuStrip1.ResumeLayout(false);
             this.contextMenuStrip2.ResumeLayout(false);
+            this.pnlSearch.ResumeLayout(false);
+            this.pnlSearch.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -194,5 +289,13 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem 刷新ToolStripMenuItem;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel pnlSearch;
+        private System.Windows.Forms.Button btnSearch;
+        private System.Windows.Forms.Button btnSearch_Close;
+        private System.Windows.Forms.Button btnSearch_down;
+        private System.Windows.Forms.Button btnSearch_Up;
+        private System.Windows.Forms.TextBox txtSearch;
+        private System.Windows.Forms.Label lblSearch_Result;
     }
 }

@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CefSharp.Structs;
 
 namespace redwood.Shell
 {
@@ -21,13 +22,32 @@ namespace redwood.Shell
     {
         private readonly ChromiumWebBrowser browser;
 
+        static BrowserForm _current =null;
+
+        public static BrowserForm Current
+        {
+            get
+            {
+                if(_current == null)
+                {
+                    _current = new BrowserForm();
+                }
+                return _current;
+            }
+        }
+
         public BrowserForm()
         {
             InitializeComponent();
+            this.label1.Visible = false;
 
             WindowState = FormWindowState.Maximized;
-            this.Text = ConfigurationManager.AppSettings["Title"];
-            mnuText.Text = this.Text;
+
+            string systemTitle = ConfigurationManager.AppSettings["Title"];
+            string assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            this.Text = systemTitle + " Ver:" + assemblyVersion;
+            mnuText.Text = this.Text;            
+
             string url = CustomConfig.Current.URL;
             if (string.IsNullOrEmpty(url))
             {
@@ -38,9 +58,14 @@ namespace redwood.Shell
 
             browser = new ChromiumWebBrowser("")
             {
-                KeyboardHandler = new KeyBoardHander(),
+                KeyboardHandler = new KeyBoardHander()
+                {
+                    Form = this,
+                },
                 Dock = DockStyle.Fill,
             };
+
+            
             this.Controls.Add(browser);
             //CefSharpSettings.LegacyJavascriptBindingEnabled = true;// 不加这句会提示异常：CefSharpSettings.LegacyJavascriptBindingEnabled is currently false,
             //browser.IsBrowserInitializedChanged += OnIsBrowserInitializedChanged;
@@ -56,39 +81,25 @@ namespace redwood.Shell
             // browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled
            
             {
-                browser.JavascriptObjectRepository.NameConverter = new MyNameConverter();            
+                //browser.JavascriptObjectRepository.NameConverter = new MyNameConverter();            
                 var obj = new JsEvent();
                 obj.ReportPath = Path.Combine(Application.StartupPath, "fastreports");
                 browser.JavascriptObjectRepository.Register("desktop", obj, false);
 
                 browser.DownloadHandler = new MyDownloadHandler();
+                browser.FindHandler = new CustomFindHandler()
+                {
+                    Form = this,
+                };
             }//browser.JavascriptObjectRepository.Register("jsObj", new JsEvent(), false, new BindingOptions { CamelCaseJavascriptNames = false });
             
-            browser.MenuHandler = new MenuHandler();
+            browser.MenuHandler = new MenuHandler(this);
             //url = "www.163.com";
             LoadUrl(url);
-        }        
 
-        private void Browser_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Control)
-            {
-                switch (e.KeyCode)
-                {
-                    case (Keys)'+':
-                        browser.SetZoomLevel(0.5);
-                        break;
-                    case (Keys)'-':
-                        browser.SetZoomLevel(-0.5);
-                        break;
-                    case (Keys)'0':
-                        browser.SetZoomLevel(0);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }       
+            var move1 = new ControlMove(pnlSearch);
+
+        }
 
         private void LoadUrl(string url)
         {
@@ -99,6 +110,11 @@ namespace redwood.Shell
                 //browser.RegisterJsObject("jsObj", new JsEvent(), new CefSharp.BindingOptions() { CamelCaseJavascriptNames = false }); //交互数据                                           
 
             }
+        }
+
+        public void ReloadHomeURL()
+        {
+            LoadUrl(CustomConfig.Current.URL);
         }
 
         private void ShowDevToolsMenuItemClick(object sender, EventArgs e)
@@ -196,11 +212,107 @@ MessageBoxIcon.Question // 图标类型：问号
         {
             browser.Reload();
         }
-
+        private bool bCloseWindows = false;
         private void BrowserForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-           // var url = CustomConfig.Current.URL;
-           // browser.Load(url);               
+            if (bCloseWindows)
+            {
+                return;
+            }
+
+            if (MessageBox.Show("是否确定退出程序？", "提示信息", MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+           //var url = CustomConfig.Current.LogoutURL;
+           // if (!string.IsNullOrEmpty(url))
+           // {
+           //     e.Cancel = true;
+           //     this.label1.Visible = true;
+                
+           //     browser.Visible = false;
+           //     browser.FrameLoadEnd += Browser_FrameLoadEnd;
+           //     browser.Load(url);                                
+           // }
+        }
+        
+
+        private void CloseWindow()
+        {
+            this.bCloseWindows = true;
+            this.Close();
+        }
+
+        private void Browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
+        {   
+            this.Invoke(new Action(CloseWindow));
+        }
+
+        private void btnSearch_Close_Click(object sender, EventArgs e)
+        {
+            pnlSearch.Visible = false;
+            browser.Focus();
+        }
+
+        public void ShowFind()
+        {
+            this.Invoke(new Action(() =>
+            {
+                this.pnlSearch.Visible = true;
+                txtSearch.Focus();
+            }));            
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            string text = txtSearch.Text.Trim();            
+            if (!string.IsNullOrEmpty(text))
+            {
+                txtSearch.Text = text;
+                lblSearch_Result.Text = "-/-";
+                browser.StopFinding(true);
+                browser.Find(text, false, false, false);
+            }
+
+        }
+
+        private void btnSearch_Up_Click(object sender, EventArgs e)
+        {
+            string text = txtSearch.Text.Trim();
+            if (!string.IsNullOrEmpty(text))
+            {
+                browser.Find(text,false, false, true);
+            }
+        }
+
+        private void btnSearch_down_Click(object sender, EventArgs e)
+        {
+            string text = txtSearch.Text.Trim();
+            if (!string.IsNullOrEmpty(text))
+            {
+                browser.Find(text, true, false, true);
+            }
+        }
+
+        public void SetSearchResult(int count,int index)
+        {
+            this.Invoke(new Action(
+                () =>
+                {
+                    this.lblSearch_Result.Text = string.Format("{0}/{1}", index, count);
+                    this.btnSearch.Enabled = true;
+                }
+                ));
+        }
+
+        private void txtSearch_KeyDown(object sender, KeyEventArgs e)
+        {            
+            if (e.KeyCode == Keys.Return)
+            {
+                this.btnSearch_Click(null, null);
+            }
         }
     }
 
@@ -309,7 +421,18 @@ MessageBoxIcon.Question // 图标类型：问号
 
         public static void WriteLog(string msg)
         {
-            File.AppendAllText(Application.StartupPath + "\\log.txt", DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "------------\n" + msg +"\r\n");
+            File.AppendAllText(Application.StartupPath + "\\log.txt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "------------\n" + msg +"\r\n");
+        }
+    }
+
+    public class CustomFindHandler : IFindHandler
+    {
+        
+        public BrowserForm Form;
+
+        public void OnFindResult(IWebBrowser chromiumWebBrowser, IBrowser browser, int identifier, int count, Rect selectionRect, int activeMatchOrdinal, bool finalUpdate)
+        {
+            this.Form.SetSearchResult(count, activeMatchOrdinal);
         }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using CefSharp;
+using System;
 
 namespace redwood.Shell
 {
     public class KeyBoardHander : IKeyboardHandler
     {
+
+        public BrowserForm Form;
 
         public bool OnKeyEvent(IWebBrowser browserControl, IBrowser browser, KeyType type, int windowsKeyCode, int nativeKeyCode, CefEventFlags modifiers, bool isSystemKey)
         {
@@ -26,14 +29,18 @@ namespace redwood.Shell
                     case (int)'0':
                         browser.SetZoomLevel(0);
                         return true;
-
+                    case (int)'F':
+                    case (int)'f':
+                        this.Form.ShowFind();
+                        break;
                 }
                 
             }
-            if (windowsKeyCode == VK_F5)
-            {
-                browser.Reload(); //此处可以添加想要实现的代码段
-            }
+            
+            //if (windowsKeyCode == VK_F5)
+            //{
+            //    browser.Reload(); //此处可以添加想要实现的代码段
+            //}
             return false;
         }
     }

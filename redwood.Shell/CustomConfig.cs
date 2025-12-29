@@ -27,6 +27,8 @@ namespace redwood.Shell
         
         public string URL { get; private set; }
 
+       
+
         public bool SetURL(string url)
         {
             if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
@@ -37,6 +39,18 @@ namespace redwood.Shell
             else
                 return false;
         }
+
+        //public string LogoutURL { get; private set; }
+        //public bool SetLogoutURL(string url)
+        //{
+        //    if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+        //    {
+        //        this.LogoutURL = url;
+        //        return true;
+        //    }
+        //    else
+        //        return false;
+        //}
 
         const string Report_Path = "fastreports";
         public static string GetReport_Path(bool bcreate = false)
@@ -54,7 +68,9 @@ namespace redwood.Shell
 
         static string GetFileName()
         {
-            return Application.StartupPath + "\\data.dat";
+            string path = Path.Combine(Application.StartupPath, "data.dat");
+            //JsEvent.WriteLog(path);
+            return path;
         }
 
         public void SaveToFile()
@@ -62,13 +78,31 @@ namespace redwood.Shell
             ObjectSerialize.SaveToFile(GetFileName(), this);
         }
 
+
+        static bool GetLoadConfigFileName(out string filename)
+        {
+            filename = GetFileName();
+            if (System.IO.File.Exists(filename))
+            {
+                return false;
+            }
+            //filename = Path.Combine(Application.StartupPath, "data_default.dat");
+            return true;
+        }
+
         public static CustomConfig Load()
         {
-            var obj = ObjectSerialize.LoadFromFile<CustomConfig>(GetFileName());
+            string file;
+
+            bool bsave = GetLoadConfigFileName(out file);
+
+            var obj = ObjectSerialize.LoadFromFile<CustomConfig>(file);
             if (obj == null)
             {
                 obj = new CustomConfig();
             }
+            if (bsave)
+                obj.SaveToFile();
             return obj;
         }
     }
@@ -86,7 +120,7 @@ namespace redwood.Shell
         }
 
         public static T LoadFromFile<T>(string fileName) where T : class
-        {
+        {            
             using (FileStream file = new FileStream(fileName, FileMode.OpenOrCreate))
             {
                 if (file == null)

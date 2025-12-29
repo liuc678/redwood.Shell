@@ -5,6 +5,12 @@ namespace redwood.Shell
 {
     public class MenuHandler : IContextMenuHandler
     {
+        public MenuHandler(BrowserForm form)
+        {
+            this.Form = form;
+        }
+        public BrowserForm Form;
+
         public void OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
         {
             model.Clear(); // 清空默认菜单
@@ -20,6 +26,8 @@ namespace redwood.Shell
             sfbl.AddItem((CefMenuCommand)26516, "80%");
             sfbl.AddItem((CefMenuCommand)26513, "100%");
             sfbl.AddItem((CefMenuCommand)26514, "150%");
+            model.AddSeparator();
+            model.AddItem((CefMenuCommand)26520, "搜索");
             model.AddSeparator();
             model.AddItem((CefMenuCommand)26501, "打开开发者工具");
             //model.AddItem((CefMenuCommand)26502, "关闭开发者工具");
@@ -67,6 +75,9 @@ namespace redwood.Shell
                     break;
                 case (CefMenuCommand)26516:
                     browser.SetZoomLevel(-0.8);
+                    break;
+                case (CefMenuCommand)26520:
+                    this.Form.ShowFind();
                     break;
             }
             return false;

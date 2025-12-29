@@ -81,7 +81,7 @@ namespace redwood.Shell
             // browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled
            
             {
-                //browser.JavascriptObjectRepository.NameConverter = new MyNameConverter();            
+                browser.JavascriptObjectRepository.NameConverter = new MyNameConverter();            
                 var obj = new JsEvent();
                 obj.ReportPath = Path.Combine(Application.StartupPath, "fastreports");
                 browser.JavascriptObjectRepository.Register("desktop", obj, false);
@@ -91,7 +91,8 @@ namespace redwood.Shell
                 {
                     Form = this,
                 };
-            }//browser.JavascriptObjectRepository.Register("jsObj", new JsEvent(), false, new BindingOptions { CamelCaseJavascriptNames = false });
+            }
+            //browser.JavascriptObjectRepository.Register("jsObj", new JsEvent(), false, new BindingOptions { CamelCaseJavascriptNames = false });
             
             browser.MenuHandler = new MenuHandler(this);
             //url = "www.163.com";

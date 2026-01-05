@@ -162,6 +162,7 @@
       <DependentUpon>BrowserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="browseUtil.cs" />
+    <Compile Include="CeFHandle\RequestHandler.cs" />
     <Compile Include="Class\ControlMove.cs" />
     <Compile Include="CustomConfig.cs" />
     <Compile Include="DownRpt.cs" />

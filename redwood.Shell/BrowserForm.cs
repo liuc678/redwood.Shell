@@ -3,18 +3,13 @@ using CefSharp.JavascriptBinding;
 using CefSharp.WinForms;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp.Structs;
+using redwood.Shell.CeFHandle;
 
 namespace redwood.Shell
 {
@@ -63,9 +58,12 @@ namespace redwood.Shell
                     Form = this,
                 },
                 Dock = DockStyle.Fill,
-            };
+                RequestHandler = new MyRequestHandler(),
+        };
 
             
+
+
             this.Controls.Add(browser);
             //CefSharpSettings.LegacyJavascriptBindingEnabled = true;// 不加这句会提示异常：CefSharpSettings.LegacyJavascriptBindingEnabled is currently false,
             //browser.IsBrowserInitializedChanged += OnIsBrowserInitializedChanged;

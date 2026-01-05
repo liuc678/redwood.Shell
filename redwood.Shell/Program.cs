@@ -31,7 +31,7 @@ namespace redwood.Shell
                 CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
 
                 //For Windows 7 and above, best to include relevant app.manifest entries as well
-                Cef.EnableHighDPISupport();
+                //Cef.EnableHighDPISupport();
 
 
                 var settings = new CefSettings();
@@ -77,7 +77,6 @@ namespace redwood.Shell
 
                RenameFile("红森软件ERP_1.exe", "红森软件ERP.exe");                
                RenameFile("BaseClass_1.dll", "BaseClass.dll");
-
             }
             catch (Exception e)
             {

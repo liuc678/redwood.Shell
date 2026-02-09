@@ -161,35 +161,40 @@
     <Compile Include="BrowserForm.Designer.cs">
       <DependentUpon>BrowserForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="browseUtil.cs" />
     <Compile Include="CeFHandle\RequestHandler.cs" />
     <Compile Include="Class\ControlMove.cs" />
-    <Compile Include="CustomConfig.cs" />
-    <Compile Include="DownRpt.cs" />
+    <Compile Include="Class\CustomConfig.cs" />
+    <Compile Include="Class\FileDownloader.cs" />
+    <Compile Include="Config\frmConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Config\frmConfig.Designer.cs">
+      <DependentUpon>frmConfig.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmBase.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmBase.Designer.cs">
       <DependentUpon>frmBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmConfig.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmConfig.Designer.cs">
-      <DependentUpon>frmConfig.cs</DependentUpon>
-    </Compile>
-    <Compile Include="KeyHandle.cs" />
-    <Compile Include="MenuHandle.cs" />
+    <Compile Include="Handle\CustomFindHandler.cs" />
+    <Compile Include="Handle\JsEvent.cs" />
+    <Compile Include="Handle\KeyBoardHander.cs" />
+    <Compile Include="Handle\MenuHandler.cs" />
+    <Compile Include="Handle\MyCersharp.cs" />
+    <Compile Include="Handle\MyDownloadHandler_109.cs" />
+    <Compile Include="Handle\MyNameConverter.cs" />
+    <Compile Include="Handle\MyRequestHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="BrowserForm.resx">
       <DependentUpon>BrowserForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Config\frmConfig.resx">
+      <DependentUpon>frmConfig.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmBase.resx">
       <DependentUpon>frmBase.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmConfig.resx">
-      <DependentUpon>frmConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

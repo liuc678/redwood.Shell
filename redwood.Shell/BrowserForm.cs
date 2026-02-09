@@ -1,29 +1,25 @@
 ﻿using CefSharp;
-using CefSharp.JavascriptBinding;
 using CefSharp.WinForms;
+using redwood.shell.Handle;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using CefSharp.Structs;
-using redwood.Shell.CeFHandle;
 
 namespace redwood.Shell
 {
     public partial class BrowserForm : Form
     {
-        private readonly ChromiumWebBrowser browser;
+        private ChromiumWebBrowser browser;
 
-        static BrowserForm _current =null;
+        static BrowserForm _current = null;
 
         public static BrowserForm Current
         {
             get
             {
-                if(_current == null)
+                if (_current == null)
                 {
                     _current = new BrowserForm();
                 }
@@ -31,26 +27,33 @@ namespace redwood.Shell
             }
         }
 
+        string System_Title;
+        string VerString;
+
         public BrowserForm()
         {
             InitializeComponent();
             this.label1.Visible = false;
 
-            WindowState = FormWindowState.Maximized;
+            WindowState = FormWindowState.Maximized;           
 
             string systemTitle = ConfigurationManager.AppSettings["Title"];
             string assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            this.Text = systemTitle + " Ver:" + assemblyVersion;
-            mnuText.Text = this.Text;            
+            this.System_Title = systemTitle;
+            this.VerString = " Ver:" + assemblyVersion;
+            mnuText.Text = this.System_Title;
+            this.SetTitle("");
+            string url = CustomConfig.Current.URL;                      
 
-            string url = CustomConfig.Current.URL;
-            if (string.IsNullOrEmpty(url))
-            {
-                //string filePath = Application.StartupPath;
-                //filePath = "file:///" + filePath.Replace("\\", "/");
-                //url = filePath + "/a.html";
-            }
 
+            var move1 = new ControlMove(pnlSearch);
+
+            CreateBrowse(url);
+            this.Controls.Add(browser);
+        }
+
+        private void CreateBrowse(string url)
+        {
             browser = new ChromiumWebBrowser("")
             {
                 KeyboardHandler = new KeyBoardHander()
@@ -59,29 +62,18 @@ namespace redwood.Shell
                 },
                 Dock = DockStyle.Fill,
                 RequestHandler = new MyRequestHandler(),
-        };
 
-            
+            };
 
-
-            this.Controls.Add(browser);
             //CefSharpSettings.LegacyJavascriptBindingEnabled = true;// 不加这句会提示异常：CefSharpSettings.LegacyJavascriptBindingEnabled is currently false,
             //browser.IsBrowserInitializedChanged += OnIsBrowserInitializedChanged;
 
             browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
-            //CefSharpSettings.WcfEnabled = true;
-            // 添加你的C#类为可由JavaScript调用
-
-            //var bind = new BindingOptions
-            //{
-            //    Binder = new DefaultBinder(new MyNameConverter())                
-            //};
-            // browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled
-           
+            
             {
-                browser.JavascriptObjectRepository.NameConverter = new MyNameConverter();            
-                var obj = new JsEvent();
-                obj.ReportPath = Path.Combine(Application.StartupPath, "fastreports");
+                browser.JavascriptObjectRepository.NameConverter = new MyNameConverter();
+                var obj = new JsEvent(this, Path.Combine(Application.StartupPath, "fastreports"));
+                //obj.ReportPath = Path.Combine(Application.StartupPath, "fastreports");
                 browser.JavascriptObjectRepository.Register("desktop", obj, false);
 
                 browser.DownloadHandler = new MyDownloadHandler();
@@ -90,14 +82,10 @@ namespace redwood.Shell
                     Form = this,
                 };
             }
-            //browser.JavascriptObjectRepository.Register("jsObj", new JsEvent(), false, new BindingOptions { CamelCaseJavascriptNames = false });
-            
+
             browser.MenuHandler = new MenuHandler(this);
-            //url = "www.163.com";
+            
             LoadUrl(url);
-
-            var move1 = new ControlMove(pnlSearch);
-
         }
 
         private void LoadUrl(string url)
@@ -125,7 +113,7 @@ namespace redwood.Shell
         private void BrowserForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             browser.Dispose();
-        }        
+        }
 
         #region 菜单事件
 
@@ -191,9 +179,9 @@ MessageBoxIcon.Question // 图标类型：问号
                 }
                 else
                 {
-                   
+
                 }
-            }        
+            }
         }
 
         private void 检测打印模版缓存目录ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -225,18 +213,18 @@ MessageBoxIcon.Question // 图标类型：问号
                 return;
             }
 
-           //var url = CustomConfig.Current.LogoutURL;
-           // if (!string.IsNullOrEmpty(url))
-           // {
-           //     e.Cancel = true;
-           //     this.label1.Visible = true;
-                
-           //     browser.Visible = false;
-           //     browser.FrameLoadEnd += Browser_FrameLoadEnd;
-           //     browser.Load(url);                                
-           // }
+            //var url = CustomConfig.Current.LogoutURL;
+            // if (!string.IsNullOrEmpty(url))
+            // {
+            //     e.Cancel = true;
+            //     this.label1.Visible = true;
+
+            //     browser.Visible = false;
+            //     browser.FrameLoadEnd += Browser_FrameLoadEnd;
+            //     browser.Load(url);                                
+            // }
         }
-        
+
 
         private void CloseWindow()
         {
@@ -245,7 +233,7 @@ MessageBoxIcon.Question // 图标类型：问号
         }
 
         private void Browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
-        {   
+        {
             this.Invoke(new Action(CloseWindow));
         }
 
@@ -261,12 +249,12 @@ MessageBoxIcon.Question // 图标类型：问号
             {
                 this.pnlSearch.Visible = true;
                 txtSearch.Focus();
-            }));            
+            }));
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            string text = txtSearch.Text.Trim();            
+            string text = txtSearch.Text.Trim();
             if (!string.IsNullOrEmpty(text))
             {
                 txtSearch.Text = text;
@@ -282,7 +270,7 @@ MessageBoxIcon.Question // 图标类型：问号
             string text = txtSearch.Text.Trim();
             if (!string.IsNullOrEmpty(text))
             {
-                browser.Find(text,false, false, true);
+                browser.Find(text, false, false, true);
             }
         }
 
@@ -295,7 +283,7 @@ MessageBoxIcon.Question // 图标类型：问号
             }
         }
 
-        public void SetSearchResult(int count,int index)
+        public void SetSearchResult(int count, int index)
         {
             this.Invoke(new Action(
                 () =>
@@ -307,131 +295,23 @@ MessageBoxIcon.Question // 图标类型：问号
         }
 
         private void txtSearch_KeyDown(object sender, KeyEventArgs e)
-        {            
+        {
             if (e.KeyCode == Keys.Return)
             {
                 this.btnSearch_Click(null, null);
             }
         }
-    }
 
-
-    public class MyNameConverter : IJavascriptNameConverter
-    {
-        public string ConvertReturnedObjectPropertyAndFieldToNameJavascript(MemberInfo memberInfo)
+        public void SetTitle(string text)
         {
-            return ConvertToJavascript(memberInfo);
+            this.Text = this.System_Title + " " + text + " " + VerString;
         }
 
-        public string ConvertToJavascript(MemberInfo memberInfo)
-        {
-            if ("CefCardReader".Equals(memberInfo.DeclaringType.Name))
-            {
-                string name = memberInfo.Name;
-                if (name.Length == 1)
-                {
-                    return name;
-                }
-                //if (name.All(char.IsUpper))
-                //{
-                //    return name;
-                //}
-                var firstHalf = name.Substring(0, 1);
-                var remainingHalf = name.Substring(1);
-                return firstHalf.ToLowerInvariant() + remainingHalf;
-            }
-            return memberInfo.Name;
-        }
-    }
-
-    public class JsEvent
-    {
-        public JsEvent()
-        {
-            this.msg = "redwood";
-            this.version = "1";
-            this.type = "win7-c#";
-        }
-
-        public string ReportPath { get; set; }
-
-        public string msg { get; set; }
-        public string version { get; set; }
-        public string type { get; set; }   
-             
-
-        public void FR(Dictionary<string,object> paramList)
-        {
-
-            try
-            {
-                string token = paramList["token"].ToString();
-
-                string host = paramList["host"].ToString();
-                string reportTempId = paramList["reportTempId"].ToString();
-                string rowGuids = paramList["rowGuids"].ToString();
-                int version = int.Parse(paramList["version"].ToString());
-                bool isPrev =bool.Parse(paramList["isPrew"].ToString());
-
-                if (host[host.Length - 1] == '/')
-                {
-                    host = host.Substring(0, host.Length - 1);
-                }
-
-                //确保打印模板
-                this.ExistTemplate(token, host, reportTempId, version);              
-
-                string exeFileName = isPrev ? "fastreportXmlUrl.exe" : "frwithoutpreviewXML.exe";
-                string param ="\"" +GetReportFileName(reportTempId,version) + "\" \"" + host + "/base/print/fast-client?token=" + token + "&reportTempId=" + reportTempId + "&rowGuids=" + rowGuids +"\"";
-                                
-                string exeFileName_Full = Path.Combine(Application.StartupPath, exeFileName);
-                //WriteLog(exeFileName_Full + " " + param);
-                Process p = Process.Start(exeFileName_Full, param);                
-
-            }
-            catch (Exception E)
-            {
-                MessageBox.Show(E.Message);
-            }
-
-            //p.WaitForExit(); // 等待外部程序退出
-        }
-
-        /// <summary>
-        /// 检测模板是否存在，如果不存在，则下载
-        /// 返回：是否有打印模板
-        /// </summary>
-        /// <returns></returns>
-        public  string ExistTemplate(string token, string host, string reportTempId, int version)
-        {
-            string filename = Path.Combine(CustomConfig.GetReport_Path(true), this.GetReportFileName(reportTempId, version));
-            if(!File.Exists(filename))
-            {
-                string url = host + "/base/print/downloadTemp?reportTempId=" + reportTempId;
-                FileDownloader.DownloadFile(url, filename, token);
-            }
-            return filename;
-        }
-
-        string GetReportFileName(string reportTempId, int version)
-        {
-            return string.Format("{0}-{1}.frx", reportTempId, version);
-        }
-
-        public static void WriteLog(string msg)
-        {
-            File.AppendAllText(Application.StartupPath + "\\log.txt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "------------\n" + msg +"\r\n");
-        }
-    }
-
-    public class CustomFindHandler : IFindHandler
-    {
-        
-        public BrowserForm Form;
-
-        public void OnFindResult(IWebBrowser chromiumWebBrowser, IBrowser browser, int identifier, int count, Rect selectionRect, int activeMatchOrdinal, bool finalUpdate)
-        {
-            this.Form.SetSearchResult(count, activeMatchOrdinal);
-        }
+        //public void InvokeSetTitle(string txt)
+        //{
+        //    this.Invoke(new Action(() => {
+        //        SetTitle(txt);
+        //    }));
+        //}           
     }
 }

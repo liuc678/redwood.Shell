@@ -1,18 +1,21 @@
 ﻿using CefSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace redwood.Shell
+namespace redwood.shell.Handle
 {
-
-    public class MyDownloadHandler : IDownloadHandler
+    internal class MyDownloadHandler : IDownloadHandler
     {
         public bool CanDownload(IWebBrowser chromiumWebBrowser, IBrowser browser, string url, string requestMethod)
         {
             return true;
         }
 
-        public void OnBeforeDownload(IWebBrowser chromiumWebBrowser, IBrowser browser, DownloadItem downloadItem, IBeforeDownloadCallback callback)
+        public bool OnBeforeDownload(IWebBrowser chromiumWebBrowser, IBrowser browser, DownloadItem downloadItem, IBeforeDownloadCallback callback)
         {
             if (!callback.IsDisposed)
             {
@@ -22,6 +25,7 @@ namespace redwood.Shell
                     callback.Continue(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), downloadItem.SuggestedFileName), showDialog: true);
                 }
             }
+            return true;
         }
 
         public void OnDownloadUpdated(IWebBrowser chromiumWebBrowser, IBrowser browser, DownloadItem downloadItem, IDownloadItemCallback callback)

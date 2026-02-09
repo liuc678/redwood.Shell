@@ -17,17 +17,17 @@ namespace redwood.Shell
         {
             get
             {
-                if(_current == null)
+                if (_current == null)
                 {
                     _current = Load();
                 }
                 return _current;
             }
         }
-        
+
         public string URL { get; private set; }
 
-       
+        public string ChromeExeName { get; private set; }        
 
         public bool SetURL(string url)
         {
@@ -40,17 +40,18 @@ namespace redwood.Shell
                 return false;
         }
 
-        //public string LogoutURL { get; private set; }
-        //public bool SetLogoutURL(string url)
-        //{
-        //    if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
-        //    {
-        //        this.LogoutURL = url;
-        //        return true;
-        //    }
-        //    else
-        //        return false;
-        //}
+        public bool SetChromeExeName(string chromeExeName)
+        {
+            if(string.IsNullOrEmpty(chromeExeName))
+            {
+                this.ChromeExeName = string.Empty;
+                return true;
+            }
+            if(!File.Exists(chromeExeName))
+                return false;
+            this.ChromeExeName = chromeExeName;
+            return true;
+        }
 
         const string Report_Path = "fastreports";
         public static string GetReport_Path(bool bcreate = false)
@@ -120,12 +121,12 @@ namespace redwood.Shell
         }
 
         public static T LoadFromFile<T>(string fileName) where T : class
-        {            
+        {
             using (FileStream file = new FileStream(fileName, FileMode.OpenOrCreate))
             {
                 if (file == null)
                     return null;
-                if(file.Length <= 0)
+                if (file.Length <= 0)
                 {
                     file.Close();
                     return null;

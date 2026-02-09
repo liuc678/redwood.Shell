@@ -84,8 +84,7 @@
             this.contextMenuStrip1.Size = new System.Drawing.Size(269, 262);
             // 
             // mnuText
-            // 
-            this.mnuText.Image = global::redwood.Shell.Properties.Resources.logo;
+            //             
             this.mnuText.Name = "mnuText";
             this.mnuText.Size = new System.Drawing.Size(268, 30);
             this.mnuText.Text = "toolStripMenuItem1";

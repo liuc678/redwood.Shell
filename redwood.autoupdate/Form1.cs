@@ -20,6 +20,10 @@ namespace redwood.autoupdate
         {
             InitializeComponent();
             this.Host = ConfigurationManager.AppSettings["host"];
+            if(Host[Host.Length-1] !='/')
+            {
+                Host = Host + "/";
+            }
         }
 
         public string Host;
@@ -49,6 +53,7 @@ namespace redwood.autoupdate
                     MessageBox.Show("检测最新版本失败，请确定是否已经联网", "提示信息");
                 }
             }
+            #region 版本更新
             if (newFileMange != null && newFileMange.Version != fileManage.Version)
             {
                 //版本更新
@@ -114,7 +119,7 @@ namespace redwood.autoupdate
                         }
                         if (!bfinish)
                         {
-                            MessageBox.Show("下载文件失败，请确定是否已经联网", "提示信息");
+                            MessageBox.Show("下载文件失败", "提示信息");
                             this.Close();
                             return;
                         }
@@ -123,8 +128,10 @@ namespace redwood.autoupdate
                 newFileMange.SaveToFile(filename);
                 fileManage = newFileMange;
             }
+            #endregion
+
             SetProgress("正在启动主程序", -1);
-            
+
             if (string.IsNullOrEmpty(fileManage.StartExe_Name))
             {
                 MessageBox.Show("未设置启动程序，请联系管理员", "提示信息");

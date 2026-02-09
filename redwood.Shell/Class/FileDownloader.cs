@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -11,18 +10,18 @@ namespace redwood.Shell
 {
     public class FileDownloader
     {
-        public static async Task DownloadFileAsync(string url, string localFilePath,string token)
+        public static async Task DownloadFileAsync(string url, string localFilePath, string token)
         {
             using (HttpClient httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Add("Authorization", token);
-                
+
                 try
                 {
                     // 发送GET请求
                     HttpResponseMessage response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
                     response.EnsureSuccessStatusCode(); // 确保响应成功
-                    
+
                     var contentType = response.Headers.GetValues("content-type").First();
                     if (contentType == "application/json")
                     {
@@ -54,7 +53,7 @@ namespace redwood.Shell
             {
                 var contentType = response.ContentType;
                 if (contentType == "application/json"
-                    || contentType.IndexOf("html")>0)
+                    || contentType.IndexOf("html") > 0)
                 {
                     Stream stream = response.GetResponseStream();
                     StreamReader streamReader = new StreamReader(stream, Encoding.UTF8);
@@ -67,7 +66,7 @@ namespace redwood.Shell
                     using (FileStream fileStream = new FileStream(localFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
                         stream.CopyTo(fileStream);
-                        fileStream.Close();                    
+                        fileStream.Close();
                     }
                     //File.WriteAllText("D:\\123456.html", streamReader.ReadToEnd());                    
                 }

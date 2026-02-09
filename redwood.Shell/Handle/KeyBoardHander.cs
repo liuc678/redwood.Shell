@@ -1,7 +1,7 @@
 ﻿using CefSharp;
-using System;
+using redwood.Shell;
 
-namespace redwood.Shell
+namespace redwood.shell.Handle
 {
     public class KeyBoardHander : IKeyboardHandler
     {
@@ -34,9 +34,9 @@ namespace redwood.Shell
                         this.Form.ShowFind();
                         break;
                 }
-                
+
             }
-            
+
             //if (windowsKeyCode == VK_F5)
             //{
             //    browser.Reload(); //此处可以添加想要实现的代码段
